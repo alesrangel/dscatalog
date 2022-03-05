@@ -63,7 +63,7 @@ class ProductRepositoryTest {
 	@Test
 	public void returnOptionalEmptyWithIdNotExists() {
 		Optional<Product> obj = repository.findById(nonExistingId);
-		assertTrue(obj == null);
+		assertTrue(obj.isEmpty());
 	}
 
 }

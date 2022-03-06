@@ -8,15 +8,15 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 public class SecurityConfig {
 
-	@Bean
-	public JwtAccessTokenConverter accessTokenConverter() {
-		JwtAccessTokenConverter tokenConverter = new JwtAccessTokenConverter();
-		tokenConverter.setSigningKey("MY-JWT-SECRET");
-		return tokenConverter;
-	}
-	
-	@Bean
-	public JwtTokenStore tokeStore() {
-		return new JwtTokenStore(accessTokenConverter());
-	}
+//	@Bean
+//	public JwtAccessTokenConverter accessTokenConverter() {
+//		JwtAccessTokenConverter tokenConverter = new JwtAccessTokenConverter();
+//		tokenConverter.setSigningKey("MY-JWT-SECRET");
+//		return tokenConverter;
+//	}
+//	
+//	@Bean
+//	public JwtTokenStore tokenStore() {
+//		return new JwtTokenStore(accessTokenConverter());
+//	}
 }

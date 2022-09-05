@@ -3,6 +3,7 @@ package com.devsuperior.dscatalog.services;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 
 import java.util.List;
 import java.util.Optional;
@@ -72,6 +73,8 @@ class ProductServiceTest {
 		Mockito.when(repository.findById(existingId)).thenReturn(Optional.of(product));
 		Mockito.when(repository.findById(nonExistingId)).thenReturn(Optional.empty());
 		
+		Mockito.when(repository.find(any(),any(),any())).thenReturn(page);
+		
 		Mockito.when(repository.getOne(existingId)).thenReturn(product);
 		Mockito.when(repository.getOne(nonExistingId)).thenThrow(EntityNotFoundException.class);
 		
@@ -112,10 +115,9 @@ class ProductServiceTest {
 
 	@Test
 	public void findAllPagedShouldReturnPage() {
-		Pageable pegeable = PageRequest.of(0, 10);
-		Page<ProductDTO> result = service.findAllPaged(pegeable);
+		PageRequest pegeable = PageRequest.of(0, 12);
+		Page<ProductDTO> result = service.findAllPaged(0L, "", pegeable);
 		Assertions.assertNotNull(result);
-		Mockito.verify(repository, Mockito.times(1)).findAll(pegeable);
 	}
 
 	@Test

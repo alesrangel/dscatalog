@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.devsuperior.dscatalog.Factory.Factory;
 import com.devsuperior.dscatalog.dto.ProductDTO;
 import com.devsuperior.dscatalog.repositories.ProductRepository;
+import com.devsuperior.dscatalog.token.TokenUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
@@ -30,6 +31,9 @@ class ProductResourceIT {
 
 	@Autowired
 	private MockMvc mockMvc;
+	
+	@Autowired
+	private TokenUtil tokenUtil;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -40,12 +44,16 @@ class ProductResourceIT {
 	private Long existingId;
 	private Long nonExistingId;
 	private Long countTotalProducts;
+	private String username;
+	private String password;
 
 	@BeforeEach
 	void setup() throws Exception {
 		existingId = 1L;
 		nonExistingId = 10000L;
 		countTotalProducts = 25L;
+		username = "maria@gmail.com";
+		password = "123456";
 	}
 
 	@Test
@@ -74,12 +82,16 @@ class ProductResourceIT {
 
 	@Test
 	public void inputShouldReturnProductDTO() throws Exception {
+		String accessToken = tokenUtil.obtainAccessToken(mockMvc, username, password);
 		ProductDTO productDTO = Factory.createProductDTO();
 
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
 
-		ResultActions result = mockMvc.perform(post("/products").content(jsonBody)
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+		ResultActions result = mockMvc.perform(post("/products")
+				.content(jsonBody)
+				.header("Authorization", "Bearer" +accessToken)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isCreated());
 		result.andExpect(jsonPath("$.name").exists());
@@ -90,6 +102,8 @@ class ProductResourceIT {
 
 	@Test
 	public void updateShoudReturnProductDTOwhenIdExists() throws Exception {
+		String accessToken = tokenUtil.obtainAccessToken(mockMvc, username, password);
+		
 		ProductDTO productDTO = Factory.createProductDTO();
 
 		String expectedName = productDTO.getName();
@@ -97,8 +111,11 @@ class ProductResourceIT {
 
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
 
-		ResultActions result = mockMvc.perform(put("/products/{id}", existingId).content(jsonBody)
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+		ResultActions result = mockMvc.perform(put("/products/{id}", existingId)
+				.header("Authorization", "Bearer" +accessToken)
+				.content(jsonBody)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON));
 
 		result.andExpect(status().isOk());
 		result.andExpect(jsonPath("$.id").value(existingId));
@@ -109,20 +126,27 @@ class ProductResourceIT {
 
 	@Test
 	public void updateShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+		String accessToken = tokenUtil.obtainAccessToken(mockMvc, username, password);
+		
 		ProductDTO productDTO = Factory.createProductDTO();
 		
 		String jsonBody = objectMapper.writeValueAsString(productDTO);
 		
-		ResultActions result = mockMvc.perform(put("/product/{id}", nonExistingId).content(jsonBody)
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+		ResultActions result = mockMvc.perform(put("/product/{id}", nonExistingId)
+				.header("Authorization", "Bearer" +accessToken)
+				.content(jsonBody)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON));
 		
 		result.andExpect(status().isNotFound());
 	}
 
 	@Test
 	public void deleteShouldReturnNoContentWhenIdExists() throws Exception {
-		
-		ResultActions result = mockMvc.perform(delete("/products/{id}", existingId).contentType(MediaType.APPLICATION_JSON)
+		String accessToken = tokenUtil.obtainAccessToken(mockMvc, username, password);
+		ResultActions result = mockMvc.perform(delete("/products/{id}", existingId)
+				.header("Authorization", "Bearer" +accessToken)
+				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON));
 		
 		assertEquals(countTotalProducts-1, repository.count());

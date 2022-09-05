@@ -13,7 +13,7 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import com.devsuperior.dscatalog.dto.UserUpdateDTO;
 import com.devsuperior.dscatalog.entities.User;
-import com.devsuperior.dscatalog.repositories.UserRepository;
+import com.devsuperior.dscatalog.repositories.UsuarioRepository;
 import com.devsuperior.dscatalog.resources.exceptions.FieldMessage;
 
 public class UserUpdateValidator implements ConstraintValidator<UserUpdateValid, UserUpdateDTO> {
@@ -22,7 +22,7 @@ public class UserUpdateValidator implements ConstraintValidator<UserUpdateValid,
 	private HttpServletRequest request;
 	
 	@Autowired
-	private UserRepository repository;
+	private UsuarioRepository repository;
 	
 	@Override
 	public void initialize(UserUpdateValid ann) {

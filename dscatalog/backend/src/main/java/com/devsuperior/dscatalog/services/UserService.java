@@ -25,7 +25,7 @@ import com.devsuperior.dscatalog.dto.UserUpdateDTO;
 import com.devsuperior.dscatalog.entities.Role;
 import com.devsuperior.dscatalog.entities.User;
 import com.devsuperior.dscatalog.repositories.RoleRepository;
-import com.devsuperior.dscatalog.repositories.UserRepository;
+import com.devsuperior.dscatalog.repositories.UsuarioRepository;
 import com.devsuperior.dscatalog.services.exceptions.DatabaseException;
 import com.devsuperior.dscatalog.services.exceptions.ResourceNotFoundException;
 
@@ -39,7 +39,7 @@ public class UserService implements UserDetailsService{
 	private BCryptPasswordEncoder passwordEncoder;
 	
 	@Autowired
-	private UserRepository repository;
+	private UsuarioRepository repository;
 	
 	@Autowired
 	private RoleRepository roleRepository;
